@@ -1,0 +1,18 @@
+version: 0.0
+os: linux
+files:
+ - source: bin
+   destination: /home/notify/event-notify/bin
+ - source: lib
+   destination: /home/notify/event-notify/lib
+
+permissions:
+ - object: /home/notify/event-notify
+   owner: notify
+hooks:
+  BeforeInstall:
+    - location: scripts/clean.sh
+      timeout: 30
+  ApplicationStart:
+    - location: scripts/restart.sh
+      timeout: 30
