@@ -18,8 +18,8 @@ public class MainController {
     @Autowired QueueService queueService
 
     @RequestMapping(value = "/heartbeat", method = RequestMethod.GET)
-    def hello(@PathVariable String id) {
-        return "melapelas";
+    def hello() {
+        return "melapelapps";
     }
 
     @RequestMapping(value = "/v0/queue/{storeId}", method = RequestMethod.GET)
