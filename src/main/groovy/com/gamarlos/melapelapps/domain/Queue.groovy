@@ -4,7 +4,7 @@ package com.gamarlos.melapelapps.domain
  * Created by marcocamacho on 3/10/16.
  */
 class Queue {
-    List<QueueElement> clients
+    Collection<QueueElement> clients
 }
 
 class QueueElement {

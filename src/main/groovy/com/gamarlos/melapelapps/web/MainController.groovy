@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 /**
@@ -18,13 +19,13 @@ public class MainController {
     @Autowired QueueService queueService
 
     @RequestMapping(value = "/heartbeat", method = RequestMethod.GET)
-    def hello() {
+    def heartbeat() {
         return "melapelapps";
     }
 
     @RequestMapping(value = "/v0/queue/{storeId}", method = RequestMethod.GET)
-    def getQueue(@PathVariable String storeId) {
-        return queueService.getQueue(storeId)
+    def getQueue(@PathVariable String storeId, @RequestParam short size) {
+        return queueService.getQueue(storeId, size)
     }
 
     @RequestMapping(value = "/v0/queue/{storeId}", method = RequestMethod.POST)

@@ -14,8 +14,8 @@ public class QueueServiceImpl implements QueueService {
     QueueRepository queueRepository;
 
     @Override
-    public Queue getQueue(String storeId) {
-        return queueRepository.getQueue(storeId);
+    public Queue getQueue(String storeId, short size) {
+        return queueRepository.getQueue(storeId, size);
     }
 
     @Override

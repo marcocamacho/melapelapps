@@ -12,10 +12,6 @@ buildscript {
     }
 }
 
-plugins {
-    id "com.jfrog.artifactory" version "3.1.1"
-}
-
 apply plugin: 'groovy'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
@@ -23,17 +19,11 @@ apply plugin: 'spring-boot'
 apply plugin: 'io.spring.dependency-management'
 apply plugin: 'maven-publish'
 
-idea {
-    module {
-        inheritOutputDirs = false
-        outputDir = file("$buildDir/classes/main/")
-    }
-}
 
-group = 'com.vonage'
+group = 'com.gamarlos'
 version = '0.0.1-SNAPSHOT'
 jar {
-    baseName = 'event-notify'
+    baseName = 'melapelapps'
 }
 
 sourceCompatibility = 1.8
@@ -42,6 +32,12 @@ targetCompatibility = 1.8
 repositories {
     mavenCentral()
     maven { url "http://repo.spring.io/libs-milestone" }
+}
+
+dependencyManagement {
+    imports {
+        mavenBom 'org.springframework.cloud:spring-cloud-netflix:1.0.7.RELEASE'
+    }
 }
 
 configurations {
@@ -53,18 +49,18 @@ configurations {
 
 dependencies {
     compile "org.springframework.cloud:spring-cloud-starter-hystrix"
+    compile 'org.springframework.cloud:spring-cloud-starter-hystrix-dashboard'
     compile "org.springframework.boot:spring-boot-starter-data-mongodb"
-    // compile "org.springframework.boot:spring-boot-starter-security"
+    // classpath "org.springframework.boot:spring-boot-starter-security"
     compile 'org.springframework.boot:spring-boot-starter'
     compile 'org.springframework.boot:spring-boot-starter-web'
     compile 'org.springframework.boot:spring-boot-starter-actuator'
-    compile 'org.springframework.cloud:spring-cloud-starter-hystrix-dashboard'
     compile "org.springframework.boot:spring-boot-starter-jetty:1.2.5.RELEASE"
     compile "org.codehaus.groovy:groovy:2.4.4"
     compile "org.codehaus.groovy:groovy-all:2.4.4"
     compile "org.apache.kafka:kafka_2.10:0.8.2.1"
-    compile "org.springframework.integration:spring-integration-kafka:1.1.1.RELEASE"
-    compile "org.springframework.integration:spring-integration-java-dsl:1.1.0.M2"
+    //compile "org.springframework.integration:spring-integration-kafka:1.1.1.RELEASE"
+    //compile "org.springframework.integration:spring-integration-java-dsl:1.1.0.M2"
     compile 'com.google.code.gson:gson:2.3.1'
     compile 'com.netflix.feign:feign-gson:8.10.0'
     compile 'com.netflix.feign:feign-slf4j:8.10.0'
@@ -78,6 +74,7 @@ dependencies {
     testCompile 'org.spockframework:spock-spring:1.0-groovy-2.4'
 }
 
+/** Task testIntegration: creates task and tells gradle to recognize test_integration dir as test */
 sourceSets {
     // Note that just declaring this sourceset creates two configurations.
     test_integration {
@@ -98,53 +95,19 @@ task testIntegration(type:Test) {
     testClassesDir = sourceSets.test_integration.output.classesDir
     classpath = sourceSets.test_integration.runtimeClasspath
 }
+/** Task testIntegration: end */
 
-dependencyManagement {
-    imports {
-        mavenBom "org.springframework.cloud:spring-cloud-starter-parent:Angel.SR3"
-    }
-}
-
-
-eclipse {
-    classpath {
-        containers.remove('org.eclipse.jdt.launching.JRE_CONTAINER')
-        containers 'org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8'
-    }
-}
-
-task wrapper(type: Wrapper) {
-    gradleVersion = '2.6'
-}
-
-
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            from components.java
-        }
-    }
-}
-
-task prepareDocker(type: Copy, dependsOn: jar) {
-    println 'copy jar'
+task prepareDocker(type: Copy, dependsOn: build) {
+    println 'copying jar'
     from 'build/libs/'
     into 'build/docker/'
     include '*.jar'
-    rename ('.*.jar', 'event-notify.jar')
+    rename ('.*.jar', jar.baseName + '.jar')
     from 'src/docker/'
     into 'build/docker/'
     include 'Dockerfile'
 }
 
-artifactory {
-    contextUrl = 'http://neovpartifactory1.neo.vocalocity.com:8081/artifactory'
-    publish {
-        repository {
-            repoKey = 'vbs-maven-snapshot'
-        }
-        defaults {
-            publications ('mavenJava')
-        }
-    }
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.6'
 }

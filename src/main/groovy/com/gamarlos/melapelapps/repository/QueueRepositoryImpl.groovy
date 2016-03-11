@@ -1,6 +1,5 @@
 package com.gamarlos.melapelapps.repository
 
-import com.gamarlos.melapelapps.domain.Queue as MelapelappsQueue
 import com.gamarlos.melapelapps.domain.QueueElement
 
 /**
@@ -9,7 +8,7 @@ import com.gamarlos.melapelapps.domain.QueueElement
 class QueueRepositoryImpl implements QueueRepository {
 
     @Override
-    MelapelappsQueue getQueue(String storeId) {
+    com.gamarlos.melapelapps.domain.Queue getQueue(String storeId, short size) {
         return null
     }
 

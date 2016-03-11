@@ -11,7 +11,7 @@ import java.util.Map;
  */
 public interface QueueService {
 
-    Queue getQueue(String storeId);
+    Queue getQueue(String storeId, short size);
 
     void pushElement(String storeId, QueueElement newElement);
 }
