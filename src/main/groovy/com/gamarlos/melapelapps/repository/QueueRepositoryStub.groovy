@@ -1,40 +1,44 @@
 package com.gamarlos.melapelapps.repository
 
-import com.gamarlos.melapelapps.domain.Queue
-import com.gamarlos.melapelapps.domain.Queue as MelapelappsQueue
+import com.gamarlos.melapelapps.domain.MappsQueue
 import com.gamarlos.melapelapps.domain.QueueElement
 
+import java.time.LocalDateTime
+import java.time.temporal.ChronoField
 import java.util.concurrent.ArrayBlockingQueue
 import java.util.concurrent.BlockingQueue
+
+import static java.time.LocalDateTime.now
+import static java.time.temporal.ChronoField.MINUTE_OF_HOUR
 
 /**
  * Created by marcocamacho on 3/9/16.
  */
 class QueueRepositoryStub implements QueueRepository {
 
-    private BlockingQueue store1Clients = [
-            new QueueElement(id: "85344", name: "SANDRA ELOISA", lastName: "AGUILAR ESCAMILLA"),
-            new QueueElement(id: "85345", name: "JORGE", lastName: "AGUILAR ESCAMOL"),
-            new QueueElement(id: "85496", name: "Kewe", lastName: "Botes"),
-    ] as BlockingQueue
+    private List store1Clients = [
+            new QueueElement(id: "85344", name: "SANDRA ELOISA", lastName: "AGUILAR ESCAMILLA", dateAdded: now()),
+            new QueueElement(id: "85345", name: "JORGE", lastName: "AGUILAR ESCAMOL", dateAdded: now().minus(1, MINUTE_OF_HOUR.baseUnit)),
+            new QueueElement(id: "85496", name: "Kewe", lastName: "Botes", dateAdded: now().minus(3, MINUTE_OF_HOUR.baseUnit)),
+    ]
 
-    private BlockingQueue store2Clients = [
-            new QueueElement(id: "85565", name: "Funky", lastName: "Guy"),
-            new QueueElement(id: "85581", name: "John", lastName: "Doe"),
-            new QueueElement(id: "85631", name: "Frank", lastName: "Royers"),
-            new QueueElement(id: "85661", name: "Pitesh", lastName: "Chingasumandranian"),
-    ] as BlockingQueue
+    private List store2Clients = [
+            new QueueElement(id: "85565", name: "Funky",    lastName: "Guy",            dateAdded: now()),
+            new QueueElement(id: "85581", name: "John",     lastName: "Doe",            dateAdded: now().minus(1, MINUTE_OF_HOUR.baseUnit)),
+            new QueueElement(id: "85631", name: "Frank",    lastName: "Royers",         dateAdded: now().minus(3, MINUTE_OF_HOUR.baseUnit)),
+            new QueueElement(id: "85661", name: "Pitesh",   lastName: "Chingasumandranian", dateAdded: now().minus(5, MINUTE_OF_HOUR.baseUnit)),
+    ]
 
-    private def storeQueues = [
-            [id: "112358", queue: new Queue(clients: store1Clients)],
-            [id: "112359", queue: new Queue(clients: store2Clients)]
+    protected def storeQueues = [
+            [id: "112358", queue: new MappsQueue(clients: new ArrayBlockingQueue<QueueElement>(20, true, store1Clients))],
+            [id: "112359", queue: new MappsQueue(clients: new ArrayBlockingQueue<QueueElement>(20, true, store2Clients))]
     ]
 
     @Override
-    MelapelappsQueue getQueue(String storeId, short limit) {
+    MappsQueue getQueue(String storeId, short limit) {
         assert limit > 0
 
-        Map<String, Queue> queue = getStoreQueue(storeId)
+        Map<String, MappsQueue> queue = getStoreQueue(storeId)
 
         if (queue == null) {
             throw new NoSuchElementException("No queue found for " + storeId)
@@ -42,12 +46,12 @@ class QueueRepositoryStub implements QueueRepository {
 
         List clients = queue.get("queue").clients.toList()
         int qSize = clients.size()
-        int fromIndex = limit > qSize ? qSize : qSize - limit
+        int fromIndex = limit > qSize ? 0 : qSize - limit
         List clientsResult = clients.subList(fromIndex, qSize)
 
         BlockingQueue queueResult = new ArrayBlockingQueue(100, true, clientsResult)
 
-        return new Queue(clients: queueResult)
+        return new MappsQueue(clients: queueResult)
     }
 
     @Override
@@ -55,10 +59,21 @@ class QueueRepositoryStub implements QueueRepository {
 
         Map queue = getStoreQueue(storeId)
 
-        queue.get("queue").clients.put(newElement)
+        queue.get("queue").clients.offer(newElement)
     }
 
-    private Map<String, Queue> getStoreQueue(storeId) {
+    @Override
+    void remove(String storeId, String clientId) {
+        Map<String, MappsQueue> queue = getStoreQueue(storeId)
+
+        if (queue == null) {
+            throw new NoSuchElementException("No queue found for " + storeId)
+        }
+
+        queue.get("queue").clients.remove(new QueueElement(id: clientId))
+    }
+
+    private Map<String, MappsQueue> getStoreQueue(storeId) {
         return storeQueues.find { it.get("id") == storeId }
     }
 }

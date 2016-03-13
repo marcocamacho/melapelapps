@@ -9,6 +9,7 @@ buildscript {
         classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
         classpath("io.spring.gradle:dependency-management-plugin:0.5.2.RELEASE")
         classpath 'org.springframework:springloaded:1.2.0.RELEASE'
+        classpath('se.transmode.gradle:gradle-docker:1.2')
     }
 }
 
@@ -18,10 +19,12 @@ apply plugin: 'idea'
 apply plugin: 'spring-boot'
 apply plugin: 'io.spring.dependency-management'
 apply plugin: 'maven-publish'
+apply plugin: 'docker'
 
-
-group = 'com.gamarlos'
-version = '0.0.1-SNAPSHOT'
+//group = 'com.gamarlos'
+group = 'mcamacho'
+//version = '0.0.1-SNAPSHOT'
+version = '0.0.1'
 jar {
     baseName = 'melapelapps'
 }
@@ -52,6 +55,11 @@ dependencies {
     compile 'org.springframework.cloud:spring-cloud-starter-hystrix-dashboard'
     compile "org.springframework.boot:spring-boot-starter-data-mongodb"
     // classpath "org.springframework.boot:spring-boot-starter-security"
+    compile 'com.fasterxml.jackson.core:jackson-core:2.7.2'
+    //compile 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.7.2'
+    compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.7.2'
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.7.2'
+    compile 'com.fasterxml.jackson.core:jackson-annotations:2.7.2'
     compile 'org.springframework.boot:spring-boot-starter'
     compile 'org.springframework.boot:spring-boot-starter-web'
     compile 'org.springframework.boot:spring-boot-starter-actuator'
@@ -97,15 +105,20 @@ task testIntegration(type:Test) {
 }
 /** Task testIntegration: end */
 
-task prepareDocker(type: Copy, dependsOn: build) {
-    println 'copying jar'
-    from 'build/libs/'
-    into 'build/docker/'
-    include '*.jar'
-    rename ('.*.jar', jar.baseName + '.jar')
-    from 'src/docker/'
-    into 'build/docker/'
-    include 'Dockerfile'
+task dockerLogin(type: Exec) {
+    commandLine "bash", "-c", "docker login --username mcamacho --password xxx --email marcovmx07@gmail.com"
+}
+
+task buildDocker(type: Docker, dependsOn: [build, dockerLogin]) {
+    push = true
+    dockerfile = file('src/main/docker/Dockerfile')
+    doFirst {
+        copy {
+            from jar
+            into stageDir
+            rename ('.*.jar', jar.baseName + '.jar')
+        }
+    }
 }
 
 task wrapper(type: Wrapper) {

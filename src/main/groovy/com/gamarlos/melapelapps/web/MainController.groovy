@@ -23,29 +23,18 @@ public class MainController {
         return "melapelapps";
     }
 
-    @RequestMapping(value = "/v0/queue/{storeId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/queue/{storeId}", method = RequestMethod.GET)
     def getQueue(@PathVariable String storeId, @RequestParam short size) {
         return queueService.getQueue(storeId, size)
     }
 
-    @RequestMapping(value = "/v0/queue/{storeId}", method = RequestMethod.POST)
+    @RequestMapping(value = "/queue/{storeId}", method = RequestMethod.POST)
     void enqueue(@PathVariable String storeId, @RequestBody QueueElement queueElement) {
         queueService.pushElement(storeId, queueElement)
     }
 
-    @RequestMapping(value = "/v0/clients", method = RequestMethod.GET)
-    def getClients() {
-        def map = [
-                [id: "85344", name: "SANDRA ELOISA", lastName: "AGUILAR ESCAMILLA"],
-                [id: "85345", name: "JORGE", lastName: "AGUILAR ESCAMOL"],
-        ]
-
-        return [records: map]
-
-    }
-
-    @RequestMapping(value = "/v0/clients", method = RequestMethod.PUT)
-    def saveClient(@PathVariable String id) {
-        return [id: "abcdxyz", name: "Elmer", lastname: "Homero"]
+    @RequestMapping(value = "/queue/{storeId}/{elementId}", method = RequestMethod.DELETE)
+    void blah(@PathVariable String storeId, @PathVariable String elementId) {
+        queueService.remove(storeId, elementId)
     }
 }

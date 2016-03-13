@@ -10,9 +10,9 @@ import org.springframework.cloud.netflix.hystrix.dashboard.EnableHystrixDashboar
 @EnableHystrixDashboard
 @EnableCircuitBreaker
 @EnableCaching
-class MelapelappsApplication {
+class MelapelApp {
 
     static void main(String[] args) {
-        SpringApplication.run(MelapelappsApplication, args)
+        SpringApplication.run(MelapelApp, args)
     }
 }

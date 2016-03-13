@@ -5,7 +5,7 @@ import spock.lang.Specification
 /**
  * Created by mcamacho on 9/23/15.
  */
-class NotificationClientTest extends Specification {
+class NotificationClientTest /*extends Specification */{
 /*
     def "DoRequest"() {
         setup:

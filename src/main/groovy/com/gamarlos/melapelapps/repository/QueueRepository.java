@@ -1,6 +1,6 @@
 package com.gamarlos.melapelapps.repository;
 
-import com.gamarlos.melapelapps.domain.Queue;
+import com.gamarlos.melapelapps.domain.MappsQueue;
 import com.gamarlos.melapelapps.domain.QueueElement;
 
 /**
@@ -8,7 +8,9 @@ import com.gamarlos.melapelapps.domain.QueueElement;
  */
 public interface QueueRepository {
 
-    Queue getQueue(String storeId, short size);
+    MappsQueue getQueue(String storeId, short size);
 
     void push(String storeId, QueueElement newElement);
+
+    void remove(String storeId, String clientId);
 }
