@@ -1,6 +1,7 @@
 #!/bin/bash
 
-. http-info.sh
+cd "$(dirname "$0")"
+. ./http-info.sh --source-only
 
 storeId=112358
 

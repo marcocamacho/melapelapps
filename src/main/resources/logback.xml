@@ -7,7 +7,7 @@
         </then>
     </if>
 
-    <property name="paPattern" value="[%d{yyyy-MM-dd HH:mm:ss.SSS}] IL - %5p [%t] %X{provisionTrackId} - %c{1}: %m%n" />
+    <property name="paPattern" value="[%d{yyyy-MM-dd HH:mm:ss.SSS}] MAPPS - %5p [%t] %X{provisionTrackId} - %c{1}: %m%n" />
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
@@ -15,16 +15,12 @@
         </encoder>
     </appender>
 
-    <logger name="com.vonage">
+    <logger name="com.gamarlos">
         <level value="${msgLevel}" />
     </logger>
 
     <logger name="org.springframework">
         <level value="info" />
-    </logger>
-
-    <logger name="org.springframework.data.mongodb.core.MongoTemplate">
-        <level value="debug" />
     </logger>
 
     <logger name="org.springframework.cache.interceptor.CacheInterceptor">
