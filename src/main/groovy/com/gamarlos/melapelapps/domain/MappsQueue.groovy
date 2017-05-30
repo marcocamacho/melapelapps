@@ -17,6 +17,7 @@ class QueueElement {
     String lastName
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     LocalDateTime dateAdded
+    String ticket
 
     boolean equals(o) {
         if (this.is(o)) return true

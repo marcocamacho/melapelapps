@@ -22,12 +22,14 @@ class QueueRepositoryStubTest extends Specification {
     def "GetQueue"() {
         given:
         String storeId = "112358"
-        short limit = 10
-        repository.storeQueues.find { it.id == storeId }.queue.clients.add(new QueueElement(id: "abc", name: "NameA", lastName: "LastName"))
-        repository.storeQueues.find { it.id == storeId }.queue.clients.add(new QueueElement(id: "dfg", name: "NameD", lastName: "LastName"))
+        short limit = 10, page = 1
+        repository.storeQueues.find { it.id == storeId }.queue.clients.with {
+            add(new QueueElement(id: "abc", name: "NameA", lastName: "LastName"))
+            add(new QueueElement(id: "dfg", name: "NameD", lastName: "LastName"))
+        }
 
         when:
-        MappsQueue queue = repository.getQueue(storeId, limit)
+        MappsQueue queue = repository.getQueue(storeId, limit, page)
 
         then:
         QueueElement firstElement = queue.clients.first()
@@ -45,10 +47,49 @@ class QueueRepositoryStubTest extends Specification {
     def "GetQueue: No elements in queue"() {
         given:
         String storeId = "112358"
-        short limit = 10
+        short limit = 10, page = 1
 
         expect:
-        repository.getQueue(storeId, limit).clients.size() == 0
+        repository.getQueue(storeId, limit, page).clients.size() == 0
+    }
+
+    def "GetQueue: get page two"() {
+        given:
+        String storeId = "112358"
+        short limit = 1, page = 2
+
+        repository.storeQueues.find { it.id == storeId }.queue.clients.with {
+            add(new QueueElement(id: "abc", name: "NameA", lastName: "LastNameA"))
+            add(new QueueElement(id: "dfg", name: "NameD", lastName: "LastNameD"))
+            add(new QueueElement(id: "hij", name: "NameH", lastName: "LastNameH"))
+        }
+
+        when:
+        MappsQueue queue = repository.getQueue(storeId, limit, page)
+
+        then:
+        assert queue.clients.size() == 1
+        QueueElement firstElement = queue.clients.first()
+
+        assert firstElement.id == "dfg"
+        assert firstElement.name == "NameD"
+        assert firstElement.lastName == "LastNameD"
+    }
+
+    def "GetQueue: get page out of range"() {
+        given:
+        String storeId = "112358"
+        short limit = 1, page = 8
+
+        repository.storeQueues.find { it.id == storeId }.queue.clients.with {
+            add(new QueueElement(id: "hij", name: "NameH", lastName: "LastNameH"))
+        }
+
+        when:
+        repository.getQueue(storeId, limit, page)
+
+        then:
+        thrown(IllegalArgumentException)
     }
 
     def "GetQueue: No store"() {
@@ -57,7 +98,7 @@ class QueueRepositoryStubTest extends Specification {
         short limit = 10
 
         when:
-        repository.getQueue(storeId, limit)
+        repository.getQueue(storeId, limit, (short) 0)
 
         then:
         thrown NoSuchElementException

@@ -65,8 +65,8 @@ dependencies {
     compile 'org.springframework.cloud:spring-cloud-starter-hystrix-dashboard'
 
     testCompile "cglib:cglib-nodep:3.1"
-    testCompile "org.spockframework:spock-core:1.0-groovy-2.4"
-    testCompile 'org.spockframework:spock-spring:1.0-groovy-2.4'
+    testCompile "org.spockframework:spock-core:1.1-groovy-2.4"
+    testCompile 'org.spockframework:spock-spring:1.1-groovy-2.4'
     testCompile "org.springframework.boot:spring-boot-starter-test"
     testCompile 'org.springframework:spring-test:4.1.7.RELEASE'
     testCompile 'org.springframework:springloaded:1.2.6.RELEASE'

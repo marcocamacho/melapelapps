@@ -8,7 +8,7 @@ import com.gamarlos.melapelapps.domain.QueueElement;
  */
 public interface QueueRepository {
 
-    MappsQueue getQueue(String storeId, short size);
+    MappsQueue getQueue(String storeId, short size, short page);
 
     void push(String storeId, QueueElement newElement);
 

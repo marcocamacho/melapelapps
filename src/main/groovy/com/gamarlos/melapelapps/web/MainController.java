@@ -16,8 +16,9 @@ public class MainController {
     private QueueService queueService;
 
     @RequestMapping(value = "/queue/{storeId}", method = RequestMethod.GET)
-    public MappsQueue getQueue(@PathVariable String storeId, @RequestParam short size) {
-        return queueService.getQueue(storeId, size);
+    public MappsQueue getQueue(@PathVariable String storeId,
+                               @RequestParam short size, @RequestParam(defaultValue = "1") short page) {
+        return queueService.getQueue(storeId, size, page);
     }
 
     @RequestMapping(value = "/queue/{storeId}", method = RequestMethod.POST)
@@ -26,7 +27,7 @@ public class MainController {
     }
 
     @RequestMapping(value = "/queue/{storeId}/{elementId}", method = RequestMethod.DELETE)
-    public void delete(@PathVariable String storeId, @PathVariable String elementId) {
+    public void deleteElement(@PathVariable String storeId, @PathVariable String elementId) {
         queueService.remove(storeId, elementId);
     }
 

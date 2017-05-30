@@ -9,7 +9,7 @@ import com.gamarlos.melapelapps.domain.QueueElement
 class QueueRepositoryImpl implements QueueRepository {
 
     @Override
-    MappsQueue getQueue(String storeId, short size) {
+    MappsQueue getQueue(String storeId, short size, short page) {
         return null
     }
 

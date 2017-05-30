@@ -35,8 +35,9 @@ class QueueRepositoryStub implements QueueRepository {
     ]
 
     @Override
-    MappsQueue getQueue(String storeId, short limit) {
+    MappsQueue getQueue(String storeId, short limit, short page) {
         assert limit > 0
+        assert page > 0
 
         Map<String, MappsQueue> queue = getStoreQueue(storeId)
 
@@ -46,8 +47,15 @@ class QueueRepositoryStub implements QueueRepository {
 
         List clients = queue.get("queue").clients.toList()
         int qSize = clients.size()
+
+        if (qSize < (limit * page) - limit)
+            throw new IllegalArgumentException("page size cannot is out of range for total " + qSize)
+
         int fromIndex = limit > qSize ? 0 : qSize - limit
-        List clientsResult = clients.subList(fromIndex, qSize)
+        int fromIndexPaged = fromIndex - (limit * (page - 1))
+        int toIndexPaged = qSize - (limit * (page - 1))
+
+        List clientsResult = clients.subList(fromIndexPaged, toIndexPaged)
 
         BlockingQueue queueResult = new ArrayBlockingQueue(100, true, clientsResult)
 
